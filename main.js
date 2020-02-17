@@ -5,7 +5,7 @@ const path = require('path');
 const {app,BrowserWindow,Menu,ipcMain} = electron;
 
 // SET ENV
-process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'devlopment';
 
 let mainWindow;
 let addWindow;
@@ -14,15 +14,16 @@ let addWindow;
 app.on('ready',function(){
     // Create new Window
     mainWindow = new BrowserWindow({
+        //webPreferences   进行网页功能的设置
         webPreferences: { //解决在视图页面引入electron模块，遇到的Uncaught ReferenceError: require is not defined
-            nodeIntegration: true
+            nodeIntegration: true   //是否整合node
         }
     });
     // Load html into window
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname,'mainWindow.html'),
         protocol:'file',
-        slashes:true
+        slashes:true     //是否在协议的冒号后面使用双斜杠
     }));
     // file://dirname//mainWindow.html
 
@@ -35,6 +36,36 @@ app.on('ready',function(){
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     Menu.setApplicationMenu(mainMenu);
 });
+
+// Create menu template
+const mainMenuTemplate = [
+  {
+      label:'File',
+      submenu:[
+          {
+              label:'Add Item',
+              click(){
+                  createAddWindow();
+              }
+          },
+          {
+              label:'Clear Items',
+              click(){
+                  mainWindow.webContents.send('item:clear');
+              }
+          },
+          {
+              label:'Quit',
+              //通过accelerator指定快捷键
+              //darwin代表苹果系统
+              accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
+              click(){
+                  app.quit();
+              }
+          }
+      ]
+  }
+];
 
 // Handle create add window
 function createAddWindow(){
@@ -55,6 +86,7 @@ function createAddWindow(){
     }));
 
     // Garbage collection handle
+    // GC，释放资源
     addWindow.on('close',function(){
         addWindow = null;
     })
@@ -66,34 +98,6 @@ ipcMain.on('item:add',function(e,item){
     mainWindow.webContents.send('item:add',item);
     addWindow.close();
 })
-
-// Create menu template
-const mainMenuTemplate = [
-    {
-        label:'File',
-        submenu:[
-            {
-                label:'Add Item',
-                click(){
-                    createAddWindow();
-                }
-            },
-            {
-                label:'Clear Items',
-                click(){
-                    mainWindow.webContents.send('item:clear');
-                }
-            },
-            {
-                label:'Quit',
-                accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
-                click(){
-                    app.quit();
-                }
-            }
-        ]
-    }
-];
 
 // If mac, add empty object to menu
 if(process.platform == 'darwin'){
