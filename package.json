@@ -1,0 +1,14 @@
+{
+  "name": "yunpan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "lizhanxu",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^8.0.0"
+  }
+}
