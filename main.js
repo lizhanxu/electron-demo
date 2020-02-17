@@ -34,6 +34,7 @@ app.on('ready',function(){
 
     // Build menu from template
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+    // 当没有指定菜单时，显示默认菜单
     Menu.setApplicationMenu(mainMenu);
 });
 
