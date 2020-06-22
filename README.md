@@ -1,1 +1,1 @@
-electron api 初试
+study electron api
